@@ -6,13 +6,20 @@
 //  Copyright (c) 2014 Almer Lucke. All rights reserved.
 //
 
+
 #import "AppDelegate.h"
+#import "FCSchemedConfiguration.h"
+
 
 @implementation AppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-    // Override point for customization after application launch.
+    // set the configuration scheme based on the selected build configuration FCSCHEMEDCONFIGURATION preprocessor macro
+#ifdef FCSCHEMEDCONFIGURATION
+    [FCSchemedConfiguration setConfigurationType:FCSCHEMEDCONFIGURATION];
+#endif
+    
     return YES;
 }
 							
