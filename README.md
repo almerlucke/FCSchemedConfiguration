@@ -1,59 +1,41 @@
-## FCPostOffice
+## FCSchemedConfiguration
 
-FCPostOffice makes it possible for remote parts of your application to communicate in a structured way. Usually you would not need something like FCPostOffice, but if your app is really complex with a lot of view controllers that sometimes need to be talking to each other, FCPostOffice offers a nice solution. Ofcourse there is NSNotificationCenter, but notifications are not very specific. 
+FCSchemedConfiguration allows you to specify different configuration values for the same key based on the build configuration you select. This allows you for example to specify different API endpoints or app secrets depending on the build you make (debug, release etc..)
 
-FCPostOffice is the opposite of NSNotificationCenter. With FCPostOffice you can send messages to specific addresses. For instance, if one view controller is registered at address "viewcontroller1", another view controller can target only that specific view controller by sending a message to "viewcontroller1". 
+You need to add a FCSchemedConfiguration.plist configuration file to your bundle for this to work. In this configuration file you can add a dictionary for each configuration key you need. In this dictionary you can specify a different value based on build configuration. The "default" key defines the fallback value if no other key matches the currently set configuration type.
 
-Because FCPostOffice uses a URL type scheme you can do sub-addressing when you send a message to a registered address. For example if an object is registered at "object1" and we send a message to it with address "object1/level1/part1", the message is delivered to the registered handler at "object1", but the message passed to the receiver will have it's addressee property set to "level1/part1". In this way the receiver can do further dispatching based on the addressee part.
+Configuration types are:
+
+-  FCSchemedConfigurationTypeDefault (0, default)
+-  FCSchemedConfigurationTypeDebug (1, debug)
+-  FCSchemedConfigurationTypeRelease (2, release)
+-  FCSchemedConfigurationTypeAdHoc (3, adhoc)
+-  FCSchemedConfigurationTypeAcceptance (4, accept)
+-  FCSchemedConfigurationTypeAppStore (5, store)
+
+This should give you enough flexibility to define the configurations you need. The best way is to add the FCSCHEMEDCONFIGURATION preprocessor macro to a build configuration. You can then use the following code snippet to set the
+configuration type (for example in your app delegate didFinishLaunchingWithOptions method):
+
+    #ifdef FCSCHEMEDCONFIGURATION
+        [FCSchemedConfiguration setConfigurationType:FCSCHEMEDCONFIGURATION];
+    #endif
+
+Check the demo project for an example of how this works. When you run the demo try to select different build configurations for the Run scheme (Edit scheme menu)
 
 ### Installation
 
 The easiest way is to use CocoaPods. If you don't already, here's a [guide](http://guides.cocoapods.org/using/getting-started.html).
 
-	pod 'FCPostOffice', '~>1.0.0'
+	pod 'FCSchemedConfiguration', '~>1.0.0'
 
 ### Usage
 
-You can register a handler with a FCPostOfficeMessageHandler protocol compliant object:
+Use setConfigurationType to define the configuration currently in use:
 
-    [FCPostOffice registerHandler:self forAddress:@"appDelegate"];
+    [FCSchemedConfiguration setConfigurationType:FCSCHEMEDCONFIGURATION];
 
-The FCPostOfficeMessageHandler protocol contains only one method which must be implemented by any compliant object:
+Get the value for a configuration key with:
 
-    - (void)handlePostOfficeMessage:(FCPostOfficeMessage *)message
-	{
-   	 	NSString *redirect = [NSString stringWithFormat:@"%@/Test", message.from];
-    	id obj = [FCPostOffice registeredHandlerForAddress:message.from];
-    
-    	NSLog(@"message received from %@", obj);
-    
-    	[FCPostOffice post:@"Hello viewcontroller" 
-    		   contentType:@"string" 
-    		   		  from:@"appDelegate" 
-    		   		  	to:@[redirect]];
-	}
-
-But you can also register a handler with a block:
-
-	[FCPostOffice registerHandlerBlock:^(FCPostOfficeMessage *message) {
-        NSLog(@"message \"%@\" from \"%@\" addressee \"%@\"", message.content, 
-        													  message.from, 
-        													  message.addressee);
-    } forAddress:@"appDelegate"];
-
-It is wise to unregister when the object registered to an address is not able to handle any incoming messages any more (for instance when it is deallocated):
-
-    [FCPostOffice unregisterHandlerForAddress:@"appDelegate"];
-
-To post a message to one or more addresses you can use:
-
-	[FCPostOffice post:@"Hello viewcontrollers" 
-		   contentType:@"string" 
-		   		  from:@"appDelegate" 
-		   		  	to:@[@"viewcontroller1", @"viewcontroller2"]];
-
-You can get the object that is registered at an address. Keep in mind that this will return nil if there is no one registered or if the registration was done with a block:
-
-	[FCPostOffice registeredHandlerForAddress:@"appDelegate"];
+    [FCSchemedConfiguration objectForKey:@"appSecret"];
 
 

@@ -22,8 +22,11 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
+    // To see the different values set for the key, select a build configuration
+    // in the edit scheme menu
 	
-    // the value of this keys will change based on the build configuration selected
+    // the value of these keys will change based on the build configuration selected
     self.label1.text = [FCSchemedConfiguration objectForKey:@"appKey"];
     self.label2.text = [FCSchemedConfiguration objectForKey:@"appSecret"];
 }

@@ -2,7 +2,7 @@ Pod::Spec.new do |s|
 
   s.name         = "FCSchemedConfiguration"
   s.version      = "1.0.0"
-  s.summary      = "Configure your app based on the selected scheme"
+  s.summary      = "Configure your app based on build configuration"
   s.description  = <<-DESC
                    Create one configuration plist that can hold different values for the same key depending on the scheme type you set.
                    The scheme type can be added as preprocessor macro to a scheme. In this way you can easily setup different server URL's, app

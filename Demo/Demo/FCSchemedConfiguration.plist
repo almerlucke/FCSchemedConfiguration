@@ -11,6 +11,8 @@
 	</dict>
 	<key>appSecret</key>
 	<dict>
+		<key>store</key>
+		<string>storeAppSecret</string>
 		<key>accept</key>
 		<string>acceptanceAppSecret</string>
 		<key>default</key>
