@@ -13,8 +13,7 @@
 @interface FCSchemedConfiguration ()
 {
     NSDictionary *_configurationDictionary;
-    NSString *_configurationSchemeKey;
-    FCSchemedConfigurationType _configurationType;
+    NSString *_configurationScheme;
 }
 
 @end
@@ -49,8 +48,7 @@
         _configurationDictionary = [NSDictionary dictionaryWithContentsOfFile:configurationFilePath];
         
         // initial configuration is default configuration
-        _configurationType = FCSchemedConfigurationTypeDefault;
-        _configurationSchemeKey = [self configurationSchemeKeyForType:_configurationType];
+        _configurationScheme = @"default";
     }
     
     return self;
@@ -59,42 +57,14 @@
 
 #pragma mark - Configurations
 
-- (NSString *)configurationSchemeKeyForType:(FCSchemedConfigurationType)configurationType
+- (void)setConfigurationScheme:(NSString *)configurationScheme
 {
-    NSString *key = @"default";
-    
-    switch (configurationType) {
-        case FCSchemedConfigurationTypeDebug:
-            key = @"debug";
-            break;
-        case FCSchemedConfigurationTypeRelease:
-            key = @"release";
-            break;
-        case FCSchemedConfigurationTypeAdHoc:
-            key = @"adhoc";
-            break;
-        case FCSchemedConfigurationTypeAcceptance:
-            key = @"accept";
-            break;
-        case FCSchemedConfigurationTypeAppStore:
-            key = @"store";
-            break;
-        default:
-            break;
-    }
-    
-    return key;
+    _configurationScheme = configurationScheme;
 }
 
-- (void)setConfigurationType:(FCSchemedConfigurationType)configurationType
++ (void)setConfigurationScheme:(NSString *)configurationScheme
 {
-    _configurationType = configurationType;
-    _configurationSchemeKey = [self configurationSchemeKeyForType:configurationType];
-}
-
-+ (void)setConfigurationType:(FCSchemedConfigurationType)configurationType
-{
-    [[self sharedInstance] setConfigurationType:configurationType];
+    [[self sharedInstance] setConfigurationScheme:configurationScheme];
 }
 
 
@@ -106,11 +76,11 @@
     NSDictionary *valueDictionary = [_configurationDictionary objectForKey:key];
     
     // get value for selected scheme
-    id value = [valueDictionary objectForKey:_configurationSchemeKey];
+    id value = [valueDictionary objectForKey:_configurationScheme];
     
     if (!value) {
         // fallback to default scheme key and value
-        NSString *schemeKey = [self configurationSchemeKeyForType:FCSchemedConfigurationTypeDefault];
+        NSString *schemeKey = @"default";
         value = [valueDictionary objectForKey:schemeKey];
     }
     

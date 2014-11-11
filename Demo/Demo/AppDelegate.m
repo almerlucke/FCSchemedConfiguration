@@ -17,7 +17,7 @@
 {
     // set the configuration scheme based on the selected build configuration FCSCHEMEDCONFIGURATION preprocessor macro
 #ifdef FCSCHEMEDCONFIGURATION
-    [FCSchemedConfiguration setConfigurationType:FCSCHEMEDCONFIGURATION];
+    [FCSchemedConfiguration setConfigurationScheme:FCSCHEMEDCONFIGURATION];
 #endif
     
     return YES;
